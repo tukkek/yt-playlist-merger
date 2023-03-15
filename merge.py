@@ -27,7 +27,7 @@ SCRIPT='''
     for(let v of VIDEOS) v.remove()
     for(let v of VIDEOS){
       let m=parseInt(v.getAttribute('minutes'))
-      if(FROM.value<=m&&TO.value) CONTAINER.appendChild(v)
+      if(FROM.value<=m&&m<=TO.value) CONTAINER.appendChild(v)
     }
   }
   
