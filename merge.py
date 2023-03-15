@@ -59,7 +59,7 @@ if len(PLAYLISTS)==0 or '.html' not in OUTPUT:
   
 for p in PLAYLISTS:
   p=json.load(open(p))
-  HEADERS.append(f"- <a href='{p['url']}' target='_blank'>{p['channel']}:   {p['name']} (updated {p['date']})</a>")
+  HEADERS.append(f"- <a href='{p['url']}' target='_blank'>{p['channel']}:   {p['name']} (exported {p['date']})</a>")
   for v in p['videos']:
     d=[int(d) for d in v['duration'].split(':')]
     m=round(d[-1]/60)
