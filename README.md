@@ -2,7 +2,7 @@
 
 This app comes in two parts:
 
-1. An userscript which you can use to export YouTube playlists as JSON files (requires an userscript add-on such as [Tampermonkey](tampermonkey.net/))
+1. [An userscript](https://raw.githubusercontent.com/tukkek/yt-playlist-merger/main/export.user.js) which you can use to export YouTube playlists as JSON files (requires an userscript add-on such as [Tampermonkey](tampermonkey.net/))
 2. A merger that takes one or more JSON files and creates a HTML page (requires [Python 3](https://www.python.org/)).
 
 The usage for the merger is something like `./merge.py playlist1.json playlist2.json merged-file-name.html`. Any amount of playlists is supported, other than zero.
