@@ -3,36 +3,6 @@ import sys,json
 
 PLAYLISTS=sys.argv[1:-1]
 OUTPUT=sys.argv[-1]
-SCRIPT='''
-  let CONTAINER=document.querySelector('#videos')
-  let VIDEOS=Array.from(CONTAINER.querySelectorAll('div'))
-  let FROM=document.querySelector('#from')
-  let TO=document.querySelector('#to')
-  
-  function roll(min,max){return Math.floor(Math.random()*(max-min+1))+min}
-
-  function shuffle(array){
-    for(let i=0;i<array.length;i++){
-      let j=roll(i,array.length-1)
-      let a=array[i]
-      let b=array[j]
-      array[i]=b
-      array[j]=a
-    }
-    return array
-  }
-  
-  function filter(){
-    shuffle(VIDEOS)
-    for(let v of VIDEOS) v.remove()
-    for(let v of VIDEOS){
-      let m=parseInt(v.getAttribute('minutes'))
-      if(FROM.value<=m&&m<=TO.value) CONTAINER.appendChild(v)
-    }
-  }
-  
-  filter()
-'''
 HTML='''
   <html>
     <title>{}</title>
@@ -47,7 +17,7 @@ HTML='''
     <br>
     <div id='videos'>{}</div>
     
-    <script>{}</script>
+    <script src='./view.js'></script>
   </html>
 '''
 HEADERS=[]
@@ -70,4 +40,4 @@ for p in PLAYLISTS:
     VIDEOS.append(f"<div minutes='{m}'><a target='_blank' href={v['url']}>{v['name']} ({v['duration']})</a></div>")
                       
 title=OUTPUT[0:OUTPUT.index('.html')]
-print(HTML.format(title,'<br>'.join(HEADERS),''.join(VIDEOS),SCRIPT),file=open(OUTPUT,'w'))
+print(HTML.format(title,'<br>'.join(HEADERS),''.join(VIDEOS)),file=open(OUTPUT,'w'))
