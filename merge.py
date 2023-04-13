@@ -37,7 +37,7 @@ for p in PLAYLISTS:
       m+=d[-2]
     if len(d)>=3:
       m+=d[-3]*60
-    VIDEOS.append(f"<div minutes='{m}'><a target='_blank' href={v['url']}>{v['name']} ({v['duration']})</a></div>")
+    VIDEOS.append(f"<div minutes='{m}'>{v['channel']} <a target='_blank' href={v['url']}>{v['name']} ({v['duration']})</a></div>")
                       
 title=OUTPUT[0:OUTPUT.index('.html')]
 print(HTML.format(title,'<br>'.join(HEADERS),''.join(VIDEOS)),file=open(OUTPUT,'w'))

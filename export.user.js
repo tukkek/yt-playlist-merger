@@ -12,9 +12,6 @@ function save(data,filename){
     let a = document.createElement('a');
     a.href = 'data:' + data;
     a.download = filename+'.json';
-    //a.innerHTML = 'download JSON';
-    //let container = document.body;
-    //container.appendChild(a);
     a.click()
 }
 
@@ -31,14 +28,14 @@ function convert(){
     PLAYLIST['url']=document.location.toString()
     let titles=document.querySelectorAll('a#video-title')
     let durations=document.querySelectorAll('ytd-thumbnail-overlay-time-status-renderer span')
-    for(let i=0;i<titles.length;i++){
+    let channels=document.querySelectorAll('.ytd-channel-name .yt-simple-endpoint')
+    for(let i=0;i<titles.length;i++)
         VIDEOS.push({
             'name':titles[i].textContent.trim(),
             'url':titles[i].href,
             'duration':durations[i].textContent.trim(),
+            'channel':channels[i].textContent.trim(),
         })
-
-    }
     save(PLAYLIST,PLAYLIST['name'])
 }
 
