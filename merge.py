@@ -28,7 +28,11 @@ if len(PLAYLISTS)==0 or '.html' not in OUTPUT:
   sys.exit(1)
   
 for p in PLAYLISTS:
-  p=json.load(open(p))
+  try:
+    p=json.load(open(p))
+  except Exception as e:
+    print(e)
+    raise Exception(f'Error loading {p}')
   HEADERS.append(f"- <a href='{p['url']}' target='_blank'>{p['channel']}:   {p['name']} (exported {p['date']})</a>")
   for v in p['videos']:
     d=[int(d) for d in v['duration'].split(':')]
