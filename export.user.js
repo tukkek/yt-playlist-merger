@@ -39,4 +39,7 @@ function convert(){
     save(PLAYLIST,PLAYLIST['name'])
 }
 
+function shortcut(event){if(event.ctrlKey&&event.key=='e') convert()}
+
 GM_registerMenuCommand('Export to JSON',convert)
+window.onkeyup=shortcut
