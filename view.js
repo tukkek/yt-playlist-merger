@@ -31,7 +31,7 @@ function filter(){
   for(let v of VIDEOS) v.remove()
   for(let v of distinguish(VIDEOS)){
     let t=v.textContent
-    let m=parseInt(v.getAttribute('minutes'))
+    let m=parseFloat(v.getAttribute('hours'))
     if(FROM.value<=m&&m<=TO.value) CONTAINER.appendChild(v)
   }
 }

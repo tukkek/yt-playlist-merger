@@ -11,8 +11,8 @@ HTML='''
     <div id='playlists'>{}</div>
     <br>
     <div>
-      Between <input type='number' size='5' value='0' onchange='filter()' id='from'>
-      and <input type='number' size='5' value='9000' onchange='filter()' id='to'> minutes.
+      Between <input type='number' size='5' value='1' onchange='filter()' id='from'>
+      and <input type='number' size='5' value='3' onchange='filter()' id='to'> hours.
     </div>
     <br>
     <div id='videos'>{}</div>
@@ -36,12 +36,16 @@ for p in PLAYLISTS:
   HEADERS.append(f"- <a href='{p['url']}' target='_blank'>{p['channel']}:   {p['name']} (exported {p['date']})</a>")
   for v in p['videos']:
     d=[int(d) for d in v['duration'].split(':')]
-    m=round(d[-1]/60)
+    minutes=round(d[-1]/60)
     if len(d)>=2:
-      m+=d[-2]
+      minutes+=d[-2]
     if len(d)>=3:
-      m+=d[-3]*60
-    VIDEOS.append(f"<div minutes='{m}'>{v['channel']} <a target='_blank' href={v['url']}>{v['name']} ({v['duration']})</a></div>")
+      minutes+=d[-3]*60
+    hours=round(minutes/60,1)
+    c=v['channel']
+    u=v['url']
+    n=v['name']
+    VIDEOS.append(f"<div hours='{hours}'>{c} <a target='_blank' href={u}>{n} ({v['duration']})</a></div>")
                       
 title=OUTPUT[0:OUTPUT.index('.html')]
 print(HTML.format(title,'<br>'.join(HEADERS),''.join(VIDEOS)),file=open(OUTPUT,'w'))
