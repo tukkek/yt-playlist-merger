@@ -32,12 +32,14 @@ function convert(){
     let durations=playlists.querySelectorAll('ytd-thumbnail-overlay-time-status-renderer span')
     let channels=playlists.querySelectorAll('.ytd-channel-name .yt-simple-endpoint')
     for(let i=0;i<titles.length;i++)
+      try{
         VIDEOS.push({
             'name':titles[i].textContent.trim(),
             'url':titles[i].href,
             'duration':durations[i].textContent.trim(),
             'channel':channels[i].textContent.trim(),
         })
+      }catch(e){continue}
     save(PLAYLIST,PLAYLIST['name'])
 }
 
