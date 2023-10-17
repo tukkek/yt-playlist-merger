@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import sys,json
+import sys,json,math
 
 PLAYLISTS=sys.argv[1:-1]
 OUTPUT=sys.argv[-1]
@@ -36,12 +36,12 @@ for p in PLAYLISTS:
   HEADERS.append(f"- <a href='{p['url']}' target='_blank'>{p['channel']}:   {p['name']} (exported {p['date']})</a>")
   for v in p['videos']:
     d=[int(d) for d in v['duration'].split(':')]
-    minutes=round(d[-1]/60)
+    minutes=math.floor(d[-1]/60)
     if len(d)>=2:
       minutes+=d[-2]
     if len(d)>=3:
       minutes+=d[-3]*60
-    hours=round(minutes/60,1)
+    hours=math.floor(minutes/60)
     c=v['channel']
     u=v['url']
     n=v['name']
