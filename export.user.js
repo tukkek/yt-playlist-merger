@@ -20,15 +20,17 @@ function convert(){
         window.alert('Scroll down to fully load playlist...')
         return
     }
+    VIDEOS.splice(0,VIDEOS.length)
     PLAYLIST['name']=document.title.replace(' - YouTube','')
     PLAYLIST['channel']=document.querySelector('#owner-text a').textContent
     let d=new Date()
     d=[d.getFullYear(),d.getMonth(),d.getDate()].map(d=>d<10?'0'+d:d)
     PLAYLIST['date']=`${d[0]}-${d[1]}-${d[2]}`
     PLAYLIST['url']=document.location.toString()
-    let titles=document.querySelectorAll('a#video-title')
-    let durations=document.querySelectorAll('ytd-thumbnail-overlay-time-status-renderer span')
-    let channels=document.querySelectorAll('.ytd-channel-name .yt-simple-endpoint')
+    let playlists=document.querySelector('#contents *[page-subtype="playlist"]')
+    let titles=playlists.querySelectorAll('a#video-title')
+    let durations=playlists.querySelectorAll('ytd-thumbnail-overlay-time-status-renderer span')
+    let channels=playlists.querySelectorAll('.ytd-channel-name .yt-simple-endpoint')
     for(let i=0;i<titles.length;i++)
         VIDEOS.push({
             'name':titles[i].textContent.trim(),
