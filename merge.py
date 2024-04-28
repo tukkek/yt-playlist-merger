@@ -7,15 +7,15 @@ HTML='''
   <html>
     <title>{}</title>
     
-    Playlists:
-    <div id='playlists'>{}</div>
-    <br>
     <div>
       Between <input type='number' size='5' value='1' onchange='filter()' id='from'>
       and <input type='number' size='5' value='3' onchange='filter()' id='to'> hours.
     </div>
     <br>
     <div id='videos'>{}</div>
+
+    <h1>Playlists</h1>
+    <div>{}</div>
     
     <script src='./view.js'></script>
   </html>
@@ -48,4 +48,4 @@ for p in PLAYLISTS:
     VIDEOS.append(f"<div hours='{hours}'>{c} <a target='_blank' href={u}>{n} ({v['duration']})</a></div>")
                       
 title=OUTPUT[0:OUTPUT.index('.html')]
-print(HTML.format(title,'<br>'.join(HEADERS),''.join(VIDEOS)),file=open(OUTPUT,'w'))
+print(HTML.format(title,''.join(VIDEOS),'<br>'.join(HEADERS)),file=open(OUTPUT,'w'))
