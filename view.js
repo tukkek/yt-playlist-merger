@@ -29,10 +29,12 @@ function distinguish(array){
 function filter(){
   shuffle(VIDEOS)
   for(let v of VIDEOS) v.remove()
+  let to=TO.value||Number.MAX_VALUE
+  let f=FROM.value||0
   for(let v of distinguish(VIDEOS)){
     let t=v.textContent
     let m=parseFloat(v.getAttribute('hours'))
-    if(FROM.value<=m&&m<=TO.value) CONTAINER.appendChild(v)
+    if(f<=m&&m<=to) CONTAINER.appendChild(v)
   }
 }
 
