@@ -1,9 +1,12 @@
 // ==UserScript==
 // @name         Video playlist to JSON
 // @match        https://www.youtube.com/playlist?list=*
+// @match        https://open.spotify.com/playlist/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=youtube.com
 // @grant        GM_registerMenuCommand
 // ==/UserScript==
+const URL=document.location.toString()
+
 class Video{
     constructor(){
         this.duration=''
@@ -13,10 +16,10 @@ class Video{
     }
 }
 
-class Playlist{
+class YouTube{
     constructor(){
         this.name=document.title.replace(' - YouTube','')
-        this.url=document.location.toString()
+        this.url=URL
         this.channel=''
         this.videos=[]
         let d=new Date()
@@ -62,9 +65,34 @@ class Playlist{
     }
 }
 
+class Spotify extends YouTube{
+    constructor(){
+        super()
+        let n=this.name
+        n=n.slice(0,n.indexOf(' - '))
+        this.name=n
+    }
 
+    extract(){
+        let playlist=document.querySelector('div[data-testid="playlist-tracklist"]')
+        let videos=[]
+        for(let r of playlist.querySelectorAll('div[data-testid="tracklist-row"]')){
+            let t=Array.from(r.querySelectorAll('*[data-encore-id=text]')).map((r)=>r.textContent)
+            let v=new Video()
+            v.url=r.querySelector('a').href
+            v.duration=t[7]
+            v.channel=t[3]
+            v.name=t[1]
+            videos.push(v)
+        }
+        return videos
+    }
+}
 
-function shortcut(event){if(event.ctrlKey&&event.key=='e') convert()}
+function launch(){
+    let site=URL.indexOf('spotify')>=0?new Spotify():new YouTube()
+    site.convert()
+}
 
-GM_registerMenuCommand('Export to JSON',()=>new Playlist().convert())
-window.onkeyup=shortcut
+GM_registerMenuCommand('Export to JSON',launch)
+window.onkeyup=(event)=>{if(event.ctrlKey&&event.key=='e') launch()}
