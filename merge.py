@@ -33,7 +33,7 @@ for p in PLAYLISTS:
   except Exception as e:
     print(e)
     raise Exception(f'Error loading {p}')
-  HEADERS.append(f"- <a href='{p['url']}' target='_blank'>{p['channel']}:   {p['name']} (exported {p['date']})</a>")
+  HEADERS.append(f"- <a href='{p['url']}' target='_blank'>{p['name']} (exported {p['date']})</a>")
   for v in p['videos']:
     d=[int(d) for d in v['duration'].split(':')]
     minutes=math.floor(d[-1]/60)
