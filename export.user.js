@@ -1,98 +1,59 @@
 // ==UserScript==
-// @name         Video playlist to JSON
+// @name         YouTube playlist to JSON
 // @match        https://www.youtube.com/playlist?list=*
-// @match        https://open.spotify.com/playlist/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=youtube.com
 // @grant        GM_registerMenuCommand
 // ==/UserScript==
-const URL=document.location.toString()
+const VIDEOS=[]
+const PLAYLIST={'videos':VIDEOS}
 
-class Video{
-    constructor(){
-        this.duration=''
-        this.channel=''
-        this.name=''
-        this.url=''
-    }
+function save(data,filename){
+    data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+    let a = document.createElement('a');
+    a.href = 'data:' + data;
+    a.download = filename+'.json';
+    a.click()
 }
 
-class YouTube{
-    constructor(){
-        this.name=document.title.replace(' - YouTube','')
-        this.url=URL
-        this.channel=''
-        this.videos=[]
-        let d=new Date()
-        d=[d.getFullYear(),d.getMonth(),d.getDate()].map(d=>d<10?'0'+d:d)
-        this.date=`${d[0]}-${d[1]}-${d[2]}`
-    }
+function parse(viewsp){
+    let views=new Number(viewsp.replace('K','000').replace('M','000000'))
+    if(isNaN(views)) throw `Can't parse view-count: ${viewsp}`
+    return views
+}
 
-    save(){
-        let data=`text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(this))}`
-        let a=document.createElement('a')
-        a.href='data:'+data
-        a.download=`${this.name}.json`
-        a.click()
-        window.alert(`Exported "${this.name}" with ${this.videos.length} videos.`)
+function convert(){
+    if(Math.ceil(window.scrollY)<window.scrollMaxY){
+        window.alert('Scroll down to fully load playlist...')
+        return
     }
-
-    extract(){
-         //this.channel=document.querySelector('#owner-text a').textContent
-        let playlists=document.querySelector('#contents *[page-subtype="playlist"]')
-        let titles=playlists.querySelectorAll('a#video-title')
-        let durations=playlists.querySelectorAll('ytd-thumbnail-overlay-time-status-renderer span')
-        let channels=playlists.querySelectorAll('.ytd-channel-name .yt-simple-endpoint')
-        let videos=[]
-        for(let i=0;i<titles.length;i++)
-            try{
-                let v=new Video()
-                v.duration=durations[i].textContent.trim()
-                v.channel=channels[i].textContent.trim()
-                v.name=titles[i].textContent.trim()
-                v.url=titles[i].href
-                videos.push(v)
-            }catch(e){continue}
-       return videos
-    }
-
-    convert(){
-        if(Math.ceil(window.scrollY)<window.scrollMaxY){
-            window.alert('Scroll down to fully load playlist...')
-            return
+    VIDEOS.splice(0,VIDEOS.length)
+    PLAYLIST['name']=document.title.replace(' - YouTube','')
+    PLAYLIST['channel']=document.querySelectorAll('yt-avatar-stack-view-model')[1].textContent.split(' ')[1]//document.querySelector('#owner-text a').textContent
+    let d=new Date()
+    d=[d.getFullYear(),d.getMonth(),d.getDate()].map(d=>d<10?'0'+d:d)
+    PLAYLIST['date']=`${d[0]}-${d[1]}-${d[2]}`
+    PLAYLIST['url']=document.location.toString()
+    let playlist=document.querySelector('#contents *[page-subtype="playlist"]')
+    let videos=playlist.querySelectorAll('ytd-playlist-video-renderer')
+    for(let video of videos){
+        let title=video.querySelector('a#video-title')
+        let channel=video.querySelector('.ytd-channel-name a')
+        let name=title.textContent.trim()
+        if(!channel){
+            window.alert(`Skip ${name}`)
+            continue
         }
-        this.videos=this.extract()
-        this.save()
+        VIDEOS.push({
+            'name':name,
+            'url':title.href,
+            'duration':video.querySelector('ytd-thumbnail-overlay-time-status-renderer span').textContent.trim(),
+            'channel':channel.textContent.trim(),
+        })
     }
+    save(PLAYLIST,PLAYLIST['name'])
 }
 
-class Spotify extends YouTube{
-    constructor(){
-        super()
-        let n=this.name
-        n=n.slice(0,n.indexOf(' - '))
-        this.name=n
-    }
+function shortcut(event){if(event.ctrlKey&&event.key=='e') convert()}
 
-    extract(){
-        let playlist=document.querySelector('div[data-testid="playlist-tracklist"]')
-        let videos=[]
-        for(let r of playlist.querySelectorAll('div[data-testid="tracklist-row"]')){
-            let t=Array.from(r.querySelectorAll('*[data-encore-id=text]')).map((r)=>r.textContent)
-            let v=new Video()
-            v.url=r.querySelector('a').href
-            v.duration=t[7]
-            v.channel=t[3]
-            v.name=t[1]
-            videos.push(v)
-        }
-        return videos
-    }
-}
-
-function launch(){
-    let site=URL.indexOf('spotify')>=0?new Spotify():new YouTube()
-    site.convert()
-}
-
-GM_registerMenuCommand('Export to JSON',launch)
-window.onkeyup=(event)=>{if(event.ctrlKey&&event.key=='e') launch()}
+GM_registerMenuCommand('Export to JSON',convert)
+window.onkeyup=shortcut
